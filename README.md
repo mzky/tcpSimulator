@@ -3,7 +3,7 @@
 
 
 ```
-[root@BJCA-device mnt]# ./tcpSimulator_linux_amd64 -h
+# ./tcpSimulator_linux_amd64 -h
 Usage: ./tcpSimulator_linux_amd64 [OPTIONS] args
 
 OPTIONS

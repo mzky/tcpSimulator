@@ -11,8 +11,9 @@ import (
 )
 
 func main() {
-	client("127.0.0.1:3389")
+	client("127.0.0.1:9000")
 }
+
 func client(addrees string) {
 	key := pbkdf2.Key([]byte("demo pass"), []byte("demo salt"), 1024, 32, sha1.New)
 	block, _ := kcp.NewAESBlockCrypt(key)

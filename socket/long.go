@@ -34,7 +34,7 @@ func handleConnection(conn net.Conn, timeout int) { //处理连接
 		go HeartBeating(conn, message, timeout) //心跳计时
 		go GravelChannel(buf, message)          //检测每次Client是否有数据传来
 		fmt.Println(string(buf[:n]))
-		result := common.TimeNow() + "_" + common.GetLocalIp() + "_result:" + string(buf[:n])
+		result := common.TimeNow() + " # " + common.GetLocalIP() + " # result: " + string(buf[:n])
 		conn.Write([]byte(result))
 	}
 }

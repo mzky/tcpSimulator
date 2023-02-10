@@ -1,13 +1,12 @@
 package server
 
 import (
-	"net/http"
-	"path/filepath"
-	"tcpSimulator/common"
-
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/unrolled/secure"
+	"net/http"
+	"path/filepath"
+	"tcpSimulator/common"
 )
 
 func Http(host string, relativePath string, certPath string) {
@@ -18,6 +17,9 @@ func Http(host string, relativePath string, certPath string) {
 	r.Any(relativePath, handler)
 
 	if certPath != "" {
+		if err := common.Generate(certPath); err != nil {
+			logrus.Fatalln(err)
+		}
 		r.Use(tlsHandler())
 		// 支持https
 		logrus.Fatalln(
@@ -38,7 +40,7 @@ func handler(c *gin.Context) {
 		"state":   http.StatusText(http.StatusOK),
 		"path":    c.Param("any"),
 		"time":    common.TimeNow(),
-		"address": common.GetLocalIp(),
+		"address": common.GetLocalIP(),
 	})
 }
 

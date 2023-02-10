@@ -43,7 +43,7 @@ func handleConn(conn net.Conn) {
 			return
 		}
 		fmt.Println(string(buf[:n]))
-		result := common.TimeNow() + "_" + common.GetLocalIp() + "_result:" + string(buf[:n])
+		result := common.TimeNow() + " # " + common.GetLocalIP() + " # result: " + string(buf[:n])
 		conn.Write([]byte(result))
 	}
 
