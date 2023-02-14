@@ -1,6 +1,10 @@
 # tcpSimulator
-提供模拟TCP/UDP服务端 支持socket长短连接和http服务
-
+模拟TCP/UDP服务端工具
+### 支持rest接口
+### socket长短连接
+### http和https（自动产生TLS证书）
+### syslog的udp
+### tcp验证
 
 ```
 # ./tcpSimulator_linux_amd64 -h
