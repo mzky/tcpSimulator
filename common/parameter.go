@@ -22,6 +22,7 @@ type Param struct {
 
 func Parameter() Param {
 	var p Param
+	p.IP = flag.String("a", "0.0.0.0", "ip address")
 	p.Port = flag.String("p", "9000", "Port")
 	p.Socket = flag.Bool("s", false, "Start short socket server")
 	p.Long = flag.Bool("l", false, "Start long-lived socket server")
@@ -30,12 +31,13 @@ func Parameter() Param {
 	p.CertPath = flag.String("c", "", "Https TLS certificate path")
 	p.Timeout = flag.Int("t", 30, "Set overtime time")
 	p.LogFile = flag.String("f", "./tcpdemo.log", "Log file")
+
 	//p.RFC = flag.String("r", "Automatic", "RFC3164, RFC6587 or RFC5424 or Automatic")
 
 	flag.Usage = usage
 	flag.Parse()
 
-	p.Address = fmt.Sprintf("0.0.0.0:%s", *p.Port)
+	p.Address = fmt.Sprintf("%s:%s", *p.IP, *p.Port)
 	return p
 }
 
@@ -49,8 +51,9 @@ func usage() {
 	flag.PrintDefaults()
 	doPrintf("")
 	doPrintf("USAGES")
-	doPrintf("  Custom Port")
+	doPrintf("  Custom Address")
 	doPrintf("        %s -p 9000", os.Args[0])
+	doPrintf("        %s -u -a 192.168.1.100 -p 9000", os.Args[0])
 	doPrintf("  Short Socket Server")
 	doPrintf("        %s -s", os.Args[0])
 	doPrintf("        %s -s -p 9000", os.Args[0])
