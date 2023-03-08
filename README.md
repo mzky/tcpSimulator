@@ -1,7 +1,7 @@
 # tcpSimulator
 提供模拟TCP/UDP服务端 支持socket长短连接和http服务
 
-其中udp服务返回syslog信息
+
 ```
 # ./tcpSimulator_linux_amd64 -h
 Usage: ./tcpSimulator_linux_amd64 [OPTIONS] args
