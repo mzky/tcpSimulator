@@ -3,6 +3,7 @@ package common
 import (
 	"github.com/mzky/tls"
 	"net"
+	"sort"
 	"strings"
 )
 
@@ -30,9 +31,13 @@ func GetLocalIpNets() (map[string][]net.IPNet, error) {
 	if err != nil {
 		return nil, err
 	}
-	returnMap := make(map[string][]net.IPNet)
+
+	ipNetArray := make(map[string][]net.IPNet)
 	for _, iFace := range iFaces {
 		if iFace.Flags&net.FlagUp == 0 { // Ignore down adapter
+			continue
+		}
+		if iFace.HardwareAddr == nil {
 			continue
 		}
 
@@ -50,10 +55,10 @@ func GetLocalIpNets() (map[string][]net.IPNet, error) {
 				ipNets = appendIPNet(ipNets, *v)
 			}
 		}
-		returnMap[iFace.Name] = ipNets
+		ipNetArray[iFace.Name] = ipNets
 	}
 
-	return returnMap, nil
+	return ipNetArray, nil
 }
 
 func GetLocalIPList() ([]string, error) {
@@ -72,5 +77,6 @@ func GetLocalIPList() ([]string, error) {
 	for _, ip := range mapAddr {
 		ipArray = append(ipArray, strings.TrimSpace(ip))
 	}
+	sort.Sort(sort.StringSlice(ipArray))
 	return ipArray, nil
 }
