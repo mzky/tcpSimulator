@@ -2,6 +2,7 @@ package common
 
 import (
 	"github.com/mzky/tls"
+	"github.com/safchain/ethtool"
 	"net"
 	"sort"
 	"strings"
@@ -26,6 +27,24 @@ func appendIPNet(slice []net.IPNet, element net.IPNet) []net.IPNet {
 	return append(slice, element)
 }
 
+func queryLinkState(adapterName string) bool {
+	et, err := ethtool.NewEthtool()
+	if err != nil {
+		return false
+	}
+	defer et.Close()
+
+	if state, _ := et.LinkState(adapterName); state != 1 {
+		return false
+	}
+	info, _ := et.DriverInfo(adapterName)
+	if info.NStats == 0 {
+		return false
+	}
+
+	return true
+}
+
 func GetLocalIpNets() (map[string][]net.IPNet, error) {
 	iFaces, err := net.Interfaces()
 	if err != nil {
@@ -37,8 +56,21 @@ func GetLocalIpNets() (map[string][]net.IPNet, error) {
 		if iFace.Flags&net.FlagUp == 0 { // Ignore down adapter
 			continue
 		}
+		if iFace.Flags&net.FlagLoopback == net.FlagLoopback { // Ignore loop back adapter
+			continue
+		}
 		if iFace.HardwareAddr == nil {
 			continue
+		}
+		if queryLinkState(iFace.Name) {
+			continue
+		}
+		kIgnoreAdapterPrefixes := []string{"lo", "tun", "vir"}
+		// if adapter name start with lo vir or tun(defined by kIgnoreAdapterPrefixes), we ignore it
+		for _, ignoreName := range kIgnoreAdapterPrefixes {
+			if strings.HasPrefix(iFace.Name, ignoreName) {
+				continue
+			}
 		}
 
 		address, err := iFace.Addrs()
@@ -67,16 +99,12 @@ func GetLocalIPList() ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	mapAddr := make(map[string]string) //去重
 	for _, ipNets := range ipMap {
 		for _, ipNet := range ipNets {
-			mapAddr[ipNet.IP.String()] = ipNet.IP.String()
+			ipArray = append(ipArray, strings.TrimSpace(ipNet.IP.String()))
 		}
 	}
 
-	for _, ip := range mapAddr {
-		ipArray = append(ipArray, strings.TrimSpace(ip))
-	}
 	sort.Sort(sort.StringSlice(ipArray))
 	return ipArray, nil
 }

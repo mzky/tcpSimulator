@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/unrolled/secure"
@@ -35,6 +36,12 @@ func Http(host string, relativePath string, certPath string) {
 }
 
 func handler(c *gin.Context) {
+	var req interface{}
+	c.BindJSON(&req)
+	if req != nil {
+		fmt.Println(req)
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"code":    http.StatusOK,
 		"state":   http.StatusText(http.StatusOK),
